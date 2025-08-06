@@ -70,6 +70,6 @@ class KeycloakController extends Controller
     {
         $id = (string)session('keycloak_id_token');
         Auth::logout();
-        return redirect()->to(Socialite::driver('keycloak')->getLogoutUrl(Config::get('app.url'), config('KEYCLOAK_CLIENT_ID', ''), $id));
+        return redirect()->to(Socialite::driver('keycloak')->getLogoutUrl(Config::get('app.url'),  config('services.keycloak.client_id', ''), $id));
     }
 }
