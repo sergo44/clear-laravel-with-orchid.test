@@ -12,6 +12,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class KeycloakController extends Controller
 {
@@ -66,6 +68,10 @@ class KeycloakController extends Controller
         $user->save();
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function logout(): RedirectResponse
     {
         $id = (string)session('keycloak_id_token');
