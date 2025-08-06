@@ -33,14 +33,6 @@ class KeycloakController extends Controller
                 ]
             );
 
-            if (!$user->permissions) {
-
-                $user->permissions = [
-                    ["platform.index" => true]
-                ];
-                $user->save();
-            }
-
             $this->syncRoles($user, $keycloakUser->user['realm_access']['roles'] ?? []);
 
             Auth::login($user);
