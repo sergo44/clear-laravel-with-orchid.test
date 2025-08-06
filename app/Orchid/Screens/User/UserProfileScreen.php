@@ -65,6 +65,7 @@ class UserProfileScreen extends Screen
 
             Button::make('Sign out')
                 ->novalidate()
+                ->rawClick()
                 ->icon('bs.box-arrow-left')
                 ->route('platform.logout'),
         ];

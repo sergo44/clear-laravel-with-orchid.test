@@ -66,6 +66,6 @@ class KeycloakController extends Controller
     public function logout(): RedirectResponse
     {
         Auth::logout();
-        return redirect('/');
+        return redirect()->to(Socialite::driver('keycloak')->getLogoutUrl());
     }
 }
