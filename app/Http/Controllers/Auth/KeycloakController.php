@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Error;
 use Exception;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -63,5 +63,9 @@ class KeycloakController extends Controller
         $user->save();
     }
 
-    // Еще надо запилить "Logout" контроллер
+    public function logout(): RedirectResponse
+    {
+        Auth::logout();
+        return redirect('/');
+    }
 }
