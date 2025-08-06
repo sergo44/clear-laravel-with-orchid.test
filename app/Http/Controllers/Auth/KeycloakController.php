@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Config;
 use Error;
 use Exception;
 use Illuminate\Http\RedirectResponse;
@@ -11,6 +12,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class KeycloakController extends Controller
 {
@@ -24,6 +27,8 @@ class KeycloakController extends Controller
         try {
 
             $keycloakUser = Socialite::driver('keycloak')->user();
+
+            session()->put('keycloak_id_token', $keycloakUser->accessTokenResponseBody['id_token'] ?? "");
 
             $user = User::updateOrCreate(
                 ['email' => $keycloakUser->getEmail()],
@@ -63,9 +68,14 @@ class KeycloakController extends Controller
         $user->save();
     }
 
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function logout(): RedirectResponse
     {
+        $id = (string)session('keycloak_id_token');
         Auth::logout();
-        return redirect()->to(Socialite::driver('keycloak')->getLogoutUrl());
+        return redirect()->to(Socialite::driver('keycloak')->getLogoutUrl(Config::get('app.url'), config('KEYCLOAK_CLIENT_ID', ''), $id));
     }
 }
