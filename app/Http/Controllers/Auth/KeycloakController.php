@@ -33,9 +33,15 @@ class KeycloakController extends Controller
                 ]
             );
 
-            if (isset($keycloakUser->user['realm_access']['roles'])) {
-                $this->syncRoles($user, $keycloakUser->user['realm_access']['roles']);
+            if (!$user->permissions) {
+
+                $user->permissions = [
+                    ["platform.index" => true]
+                ];
+                $user->save();
             }
+
+            $this->syncRoles($user, $keycloakUser->user['realm_access']['roles'] ?? []);
 
             Auth::login($user);
 
@@ -48,17 +54,17 @@ class KeycloakController extends Controller
 
     protected function syncRoles(User $user, array $keycloakRoles)
     {
-        $permissions = [];
+        $permissions['platform.index'] = 1;
 
         // Для примера права
         if (in_array('admin', $keycloakRoles)) {
-            $permissions['platform.index'] = 1;
             $permissions['platform.systems.roles'] = 1;
             $permissions['platform.systems.users'] = 1;
             $permissions['platform.systems.attachment'] = 1;
         }
 
-        $user->fill(['permissions' => $permissions])->save();
+        $user->permissions = $permissions;
+        $user->save();
     }
 
     // Еще надо запилить "Logout" контроллер

@@ -17,9 +17,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (Throwable $e, Illuminate\Http\Request $request): null|RedirectResponse {
             if (! $request->expectsJson() && method_exists($e, 'getStatusCode') && $e->getStatusCode() === 401) {
-                // Редиректим на авторизацию (401-ое исключение)
+                // Редирект на авторизацию (401-ое исключение)
                 return redirect('/auth/keycloak/redirect');
             }
+
+            return null;
         });
     })
     ->create();
