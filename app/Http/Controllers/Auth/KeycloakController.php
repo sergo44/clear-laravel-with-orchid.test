@@ -46,14 +46,18 @@ class KeycloakController extends Controller
 
     protected function syncRoles(User $user, array $keycloakRoles)
     {
-        $permissions['platform.index'] = 1;
+        $permissions = $user->permissions ?? array();
+
+        if (!isset($permissions['platform.index'])) {
+            $permissions['platform.index'] = true;
+        }
 
         // Для примера права
-        if (in_array('admin', $keycloakRoles)) {
+        /* if (in_array('admin', $keycloakRoles)) {
             $permissions['platform.systems.roles'] = 1;
             $permissions['platform.systems.users'] = 1;
             $permissions['platform.systems.attachment'] = 1;
-        }
+        } */
 
         $user->permissions = $permissions;
         $user->save();
